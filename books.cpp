@@ -6,38 +6,16 @@
 //#include <stdlib.h>
 //#include <ctype.h>
 
-using namespace std;
+//using namespace std;
 //#define NEWMAXPAGESIZE 307
-#define MAXPAGESIZE 255
+/*
+#define MAXPAGESIZE 225
 #define MAXPAGES 50
 #define MAXLINENUM 13
-#define MAXLINELENGTH 115 // prev 22
+#define MAXLINELENGTH 116 // really just 115, but lobs off last space
 #define NEWPAGETHRESH 220
 #define BLANKLINELEN 1
-
-
-/* bool is_number(const std::string& s)
-{
-    std::string::const_iterator it = s.begin();
-    while (it != s.end() && isdigit(*it)) ++it;
-    return !s.empty() && it == s.end();
-}*/
-
-
-/* class Book {
-    // bool updated
-    Book () {
-
-    }
-private:
-    int pagelen;
-    //char text_in[MAXPAGES * OLDMAXPAGESIZE];
-
-};*/
-
-/*void printPage(ostream& os, std::string line, int start, int end) {
-    os << line.substr(start, end);
-}*/
+*/
 
 
 /*
@@ -92,7 +70,7 @@ unsigned int width(char let) {
     }
 }
 
-void printWord (ofstream &out, string &line, int begin, int end) {
+void printWord (std::ofstream &out, std::string &line, int begin, int end) {
     /*for (; begin <= end; begin++) {
         out << line[begin];
     }*/
@@ -100,7 +78,7 @@ void printWord (ofstream &out, string &line, int begin, int end) {
 }
 
 // Excludes commas and colons
-bool lastPunctuation (unsigned int i, string &line) {
+bool lastPunctuation (unsigned int i, std::string &line) {
     i++;
     if (line.length() > i) {
         return (line[i] != '.' && line[i] != '!' && line[i] != '?' && line[i] != ';');
@@ -109,9 +87,16 @@ bool lastPunctuation (unsigned int i, string &line) {
 }
 
 int main (int argc, char ** argv) {
-    ifstream inFile;
-    ofstream outFile;
-    string line;
+		constexpr auto MAXPAGESIZE = 255;
+		constexpr auto MAXPAGES = 50;
+		constexpr auto MAXLINENUM = 13;
+		constexpr auto MAXLINELENGTH = 116;
+		constexpr auto NEWPAGETHRESH = 220;
+		constexpr auto BLANKLINELEN = 1;
+
+		std::ifstream inFile;
+		std::ofstream outFile;
+		std::string line;
     unsigned int i;
     //bool isPacked;
 
@@ -144,8 +129,8 @@ int main (int argc, char ** argv) {
     unsigned int lineNum = 0; unsigned int inputLen = 0; unsigned int prevInputLen = 0;
     bool notWhiteSpace = false;
     outFile << "========PAGE 1========\n";
-    while (getline(inFile, line)) {
-        cout << "LINE LENGTH: " << line.length() << "\n";
+    while (getline(inFile, line) && pageNum <= MAXPAGES) {
+        //cout << "LINE LENGTH: " << line.length() << "\n";
         // Make sure not on last line or over character lmit
         unsigned int lineStart = 0; unsigned int lineLen = 0;
         unsigned int wordStart = 0;
@@ -172,9 +157,9 @@ int main (int argc, char ** argv) {
                 //\printWord(outFile, line, wordStart, i);
             
             } else if (line[i] == '\n' || (line[i] == ' ' && potLineLen > MAXLINELENGTH)) {
-                printf("SHARK!\n");
+                //printf("SHARK!\n");
                 if (notWhiteSpace) { // can do 3 comparisons bc checking if 1
-                    printf("ATTACK!\n");
+                    //printf("ATTACK!\n");
                     printWord(outFile, line, wordStart, i);
                     lineNum++;
                 } else {
@@ -204,14 +189,14 @@ int main (int argc, char ** argv) {
                 lineLen = i - wordStart + 1;
             } else if (lastPunctuation(i, line) && i + 1 != inputLen && 
                 (line[i] == '.' || line[i] == '!' || line[i] == '?' || line[i] == ';')) {
-                cout << "Entry index: " << i << " for char " << line[i] << "\n";
+                //cout << "Entry index: " << i << " for char " << line[i] << "\n";
                 notWhiteSpace = true;
                 /*if (i + 1 == line.length()) {
                     cout << "LASTCHAR\n";
                     printWord(outFile, line, wordStart, i);
                     lineNum = li = 0;
                 } else */ if (!isPacked  && (lineNum + 1 >= MAXLINENUM || li > NEWPAGETHRESH)) {
-                    cout << "FORCE NEWLINE\n";
+                    //cout << "FORCE NEWLINE\n";
                     printWord(outFile, line, wordStart, i);
                     wordStart = lineStart = i + 1;
                     lineNum = li = lineLen = 0;
@@ -219,24 +204,24 @@ int main (int argc, char ** argv) {
                 }
 
             } else if (inputLen > BLANKLINELEN) {
-                cout << "Else for " << line[i] << "\n";
+                //cout << "Else for " << line[i] << "\n";
                 //cout << "Newline? " << (line[i] == '\n') << "\n";
                 notWhiteSpace = true;
                 lineLen = potLineLen;
             }
             ++li;
         }
-        cout << "NOT WHITE SPACE? " << notWhiteSpace << "\n";
-        cout << "Prev input length: " << prevInputLen << " input length: " << inputLen << "\n";
-        cout << "Double new? " << (prevInputLen == (inputLen == 1)) << " packed? " << isPacked << "\n";
+        //cout << "NOT WHITE SPACE? " << notWhiteSpace << "\n";
+        //cout << "Prev input length: " << prevInputLen << " input length: " << inputLen << "\n";
+        //cout << "Double new? " << (prevInputLen == (inputLen == 1)) << " packed? " << isPacked << "\n";
         if (!isPacked && prevInputLen == BLANKLINELEN && inputLen == BLANKLINELEN && notWhiteSpace) {
             li--; //for prev \n
-            cout << "REEE\n";
+            //cout << "REEE\n";
             outFile << "\n========PAGE " << ++pageNum << "========\n";
             notWhiteSpace = false;
 
         } else if (notWhiteSpace) { // can do 3 comparisons bc checking if 1
-            printf("BABY!\n");
+            //printf("BABY!\n");
             printWord(outFile, line, wordStart, i);
             lineNum++;
             li++;
