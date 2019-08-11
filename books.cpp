@@ -173,7 +173,7 @@ int main (int argc, char ** argv) {
             
             } else if (line[i] == '\n' || (line[i] == ' ' && potLineLen > MAXLINELENGTH)) {
                 printf("SHARK!\n");
-                if (!(!isPacked && prevInputLen == BLANKLINELEN && inputLen == BLANKLINELEN) && notWhiteSpace) { // can do 3 comparisons bc checking if 1
+                if (notWhiteSpace) { // can do 3 comparisons bc checking if 1
                     printf("ATTACK!\n");
                     printWord(outFile, line, wordStart, i);
                     lineNum++;
@@ -219,6 +219,7 @@ int main (int argc, char ** argv) {
                 }
 
             } else if (inputLen > BLANKLINELEN) {
+                cout << "Else for " << line[i] << "\n";
                 //cout << "Newline? " << (line[i] == '\n') << "\n";
                 notWhiteSpace = true;
                 lineLen = potLineLen;
@@ -228,7 +229,13 @@ int main (int argc, char ** argv) {
         cout << "NOT WHITE SPACE? " << notWhiteSpace << "\n";
         cout << "Prev input length: " << prevInputLen << " input length: " << inputLen << "\n";
         cout << "Double new? " << (prevInputLen == (inputLen == 1)) << " packed? " << isPacked << "\n";
-        if (!(!isPacked && prevInputLen == BLANKLINELEN && inputLen == BLANKLINELEN) && notWhiteSpace) { // can do 3 comparisons bc checking if 1
+        if (!isPacked && prevInputLen == BLANKLINELEN && inputLen == BLANKLINELEN && notWhiteSpace) {
+            li--; //for prev \n
+            cout << "REEE\n";
+            outFile << "\n========PAGE " << ++pageNum << "========\n";
+            notWhiteSpace = false;
+
+        } else if (notWhiteSpace) { // can do 3 comparisons bc checking if 1
             printf("BABY!\n");
             printWord(outFile, line, wordStart, i);
             lineNum++;
